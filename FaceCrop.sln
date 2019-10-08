@@ -4,21 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceCrop.Android", "FaceCrop\FaceCrop.Android\FaceCrop.Android.csproj", "{85E284B2-AEFD-490A-9084-9A7EC57D62CD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{90A27289-7159-4C8C-B718-60363C5DEB36} = {90A27289-7159-4C8C-B718-60363C5DEB36}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceCrop.iOS", "FaceCrop\FaceCrop.iOS\FaceCrop.iOS.csproj", "{CE4B28EF-537B-4CF7-8BE2-A78DFAE2A5CE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{90A27289-7159-4C8C-B718-60363C5DEB36} = {90A27289-7159-4C8C-B718-60363C5DEB36}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FaceCrop", "FaceCrop\FaceCrop\FaceCrop.csproj", "{E7C107CF-EA08-4301-A3AD-183A8CA7D151}"
-	ProjectSection(ProjectDependencies) = postProject
-		{90A27289-7159-4C8C-B718-60363C5DEB36} = {90A27289-7159-4C8C-B718-60363C5DEB36}
-	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModels", "ViewModels\ViewModels.csproj", "{90A27289-7159-4C8C-B718-60363C5DEB36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModels", "FaceCrop\ViewModels\ViewModels.csproj", "{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,18 +75,18 @@ Global
 		{E7C107CF-EA08-4301-A3AD-183A8CA7D151}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{E7C107CF-EA08-4301-A3AD-183A8CA7D151}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{E7C107CF-EA08-4301-A3AD-183A8CA7D151}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Release|iPhone.Build.0 = Release|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{90A27289-7159-4C8C-B718-60363C5DEB36}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Release|iPhone.Build.0 = Release|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{5F3D3E5B-FFBB-4B2A-BAB4-C2BA66AE5E33}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
