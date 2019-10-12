@@ -3,19 +3,21 @@ using System.IO;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using FaceCrop.Droid.Services;
 using ViewModels.Serivces;
 using Xamarin.Forms;
 
-[assembly: Dependency(typeof(IPhotoGalleryService))]
+
+[assembly: Dependency(typeof(PhotoGalleryService))]
 
 namespace FaceCrop.Droid.Services
 {
     public class PhotoGalleryService : IPhotoGalleryService
     {
-        public PhotoGalleryService()
-        {
+        //public PhotoGalleryService()
+        //{
 
-        }
+        //}
 
         public Task<Stream> GetImageStreamAsync()
         {

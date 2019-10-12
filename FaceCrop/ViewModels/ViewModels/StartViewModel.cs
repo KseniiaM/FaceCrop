@@ -16,11 +16,11 @@ namespace ViewModels.ViewModels
 
         private async void PickFromGalleryCommandExecute(object parameter)
         {
-            Stream stream = await DependencyService.Get<IPhotoGalleryService>().GetImageStreamAsync();
-            if (stream != null)
-            {
-                SelectedImageSource = ImageSource.FromStream(() => stream);
-            }
+            //Stream stream = await DependencyService.Get<IPhotoGalleryService>().GetImageStreamAsync();
+            //if (stream != null)
+            //{
+             //   SelectedImageSource = ImageSource.FromStream(() => stream);
+            //}
         }
 
         private void TakePhotoCommandExecute(object parameter)
