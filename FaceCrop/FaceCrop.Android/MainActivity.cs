@@ -11,7 +11,7 @@ using MvvmCross.Forms.Platforms.Android.Views;
 
 namespace FaceCrop.Droid
 {
-    [Activity(Label = "XFwMvx", Icon = "@mipmap/icon", Theme = "@style/MainTheme",
+    [Activity(Label = "FaceCrop", Icon = "@mipmap/icon", Theme = "@style/MainTheme",
         MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : MvxFormsAppCompatActivity<MvxFormsAndroidSetup<ViewModels.App, App>, ViewModels.App, App>
     {
