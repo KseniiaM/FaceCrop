@@ -1,14 +1,59 @@
-﻿using MvvmCross.ViewModels;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
+using MvvmCross.Navigation;
+using MvvmCross.ViewModels;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
+using Xamarin.Forms;
 
 namespace ViewModels.ViewModels
 {
     public class StartViewModel : MvxViewModel
     {
-        public override void ViewAppearing()
+        private IMvxNavigationService navigationService;
+
+        private bool isMediaInitialized;
+
+        public ICommand PickFromGalleryCommand => new Command(PickFromGalleryCommandExecute);
+
+        public ICommand TakePhotoCommand => new Command(TakePhotoCommandExecute);
+
+        public StartViewModel(IMvxNavigationService navigationService)
         {
-            base.ViewAppearing();
+            this.navigationService = navigationService;
         }
 
-        public string WelcomeText => "Hello Xamarin.Forms with MvvmCross";
+        private async void PickFromGalleryCommandExecute(object parameter)
+        {
+            await DisplayImageOnNewPage(true);
+        }
+
+        private async void TakePhotoCommandExecute(object parameter)
+        {
+            await DisplayImageOnNewPage(false);
+        }
+
+        private async Task DisplayImageOnNewPage(bool getFromGallery)
+        {
+            await InitMedia();
+            var selectedImage = getFromGallery ? await CrossMedia.Current.PickPhotoAsync()
+                                               : await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions());
+
+            //user did not select anything
+            if (selectedImage != null)
+            {
+                var selectedImageSource = ImageSource.FromStream(() => selectedImage.GetStream());
+                await navigationService.Navigate<DisplayImagesViewModel, ImageSource>(selectedImageSource);
+            }
+        }
+
+        private async Task InitMedia()
+        {
+            if (!isMediaInitialized)
+            {
+                await CrossMedia.Current.Initialize();
+                isMediaInitialized = true;
+            }
+        }
     }
 }

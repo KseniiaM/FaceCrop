@@ -3,12 +3,44 @@
     xmlns:views="clr-namespace:MvvmCross.Forms.Views;assembly=MvvmCross.Forms"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="FaceCrop.Views.StartPage">
-   
+    x:Class="FaceCrop.Views.StartPage" >
+   <views:MvxContentPage.Resources>
+       <Color x:Key="BlueColor">#2255AA</Color>
+   </views:MvxContentPage.Resources>
     <ContentPage.Content>
-        <Label Text="{Binding WelcomeText}"
-               VerticalOptions="CenterAndExpand"
-               HorizontalOptions="CenterAndExpand"
-               FontSize="30"/>
+        
+        <StackLayout Spacing="20"
+                     VerticalOptions="CenterAndExpand">
+            
+<!--TODO create a style for buttons and text -->
+            <Label Text="Face Crop"
+                   HorizontalOptions="CenterAndExpand"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource BlueColor}"/>
+
+            <Label Text="Please upload a picture"
+                   HorizontalOptions="CenterAndExpand"
+                   FontSize="Medium"
+                   TextColor="{StaticResource BlueColor}"/>
+
+            <Button Text="Load from gallery"
+                    HorizontalOptions="CenterAndExpand"
+                    FontSize="Medium"
+                    WidthRequest="150"
+                    BackgroundColor="{StaticResource BlueColor}"
+                    TextColor="White"
+                    Command="{Binding PickFromGalleryCommand}"/>
+
+            <Button Text="Take a photo"
+                    HorizontalOptions="CenterAndExpand"
+                    WidthRequest="150"
+                    FontSize="Medium"
+                    BackgroundColor="{StaticResource BlueColor}"
+                    TextColor="White"
+                    Command="{Binding TakePhotoCommand}"/>
+
+        </StackLayout>
+
     </ContentPage.Content>
 </views:MvxContentPage>
