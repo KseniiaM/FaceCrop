@@ -7,6 +7,8 @@ using MvvmCross.Forms.Platforms.Android.Views;
 using System.Threading.Tasks;
 using System.IO;
 using Android.Content;
+using Xamarin.Forms.Platform.Android;
+using Plugin.CurrentActivity;
 
 namespace FaceCrop.Droid
 {
@@ -20,13 +22,14 @@ namespace FaceCrop.Droid
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            //Xamarin.Essentials.Platform.Init(this, bundle);
+            CrossCurrentActivity.Current.Init(this, bundle);
+            Xamarin.Essentials.Platform.Init(this, bundle);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
-            //Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Plugin.Permissions.PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 

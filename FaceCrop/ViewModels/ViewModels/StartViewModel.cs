@@ -1,31 +1,59 @@
-﻿using System.IO;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
+using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
-using ViewModels.Serivces;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 using Xamarin.Forms;
 
 namespace ViewModels.ViewModels
 {
     public class StartViewModel : MvxViewModel
     {
-        public ImageSource SelectedImageSource { get; private set; }
+        private IMvxNavigationService navigationService;
+
+        private bool isMediaInitialized;
 
         public ICommand PickFromGalleryCommand => new Command(PickFromGalleryCommandExecute);
 
         public ICommand TakePhotoCommand => new Command(TakePhotoCommandExecute);
 
-        private async void PickFromGalleryCommandExecute(object parameter)
+        public StartViewModel(IMvxNavigationService navigationService)
         {
-            //Stream stream = await DependencyService.Get<IPhotoGalleryService>().GetImageStreamAsync();
-            //if (stream != null)
-            //{
-             //   SelectedImageSource = ImageSource.FromStream(() => stream);
-            //}
+            this.navigationService = navigationService;
         }
 
-        private void TakePhotoCommandExecute(object parameter)
+        private async void PickFromGalleryCommandExecute(object parameter)
         {
+            await DisplayImageOnNewPage(true);
+        }
 
+        private async void TakePhotoCommandExecute(object parameter)
+        {
+            await DisplayImageOnNewPage(false);
+        }
+
+        private async Task DisplayImageOnNewPage(bool getFromGallery)
+        {
+            await InitMedia();
+            var selectedImage = getFromGallery ? await CrossMedia.Current.PickPhotoAsync()
+                                               : await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions());
+
+            //user did not select anything
+            if (selectedImage != null)
+            {
+                var selectedImageSource = ImageSource.FromStream(() => selectedImage.GetStream());
+                await navigationService.Navigate<DisplayImagesViewModel, ImageSource>(selectedImageSource);
+            }
+        }
+
+        private async Task InitMedia()
+        {
+            if (!isMediaInitialized)
+            {
+                await CrossMedia.Current.Initialize();
+                isMediaInitialized = true;
+            }
         }
     }
 }
