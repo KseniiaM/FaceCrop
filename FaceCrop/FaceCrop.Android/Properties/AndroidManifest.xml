@@ -4,7 +4,9 @@
           android:versionName="1.0" 
           package="com.companyname.FaceCrop">
 	<uses-sdk android:minSdkVersion="25" android:targetSdkVersion="28" />
-	<application android:label="FaceCrop.Android">
+  <uses-permission android:name="android.permission.INTERNET" />
+	<application android:label="FaceCrop.Android"
+               android:usesCleartextTraffic="true">
     <provider android:name="android.support.v4.content.FileProvider"
       android:authorities="${applicationId}.fileprovider"
       android:exported="false"

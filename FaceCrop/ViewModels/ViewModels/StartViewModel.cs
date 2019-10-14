@@ -4,13 +4,15 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using ViewModels.Services;
 using Xamarin.Forms;
 
 namespace ViewModels.ViewModels
 {
     public class StartViewModel : MvxViewModel
     {
-        private IMvxNavigationService navigationService;
+        private readonly IMvxNavigationService navigationService;
+        private readonly IRestCallsService restService;
 
         private bool isMediaInitialized;
 
@@ -18,8 +20,9 @@ namespace ViewModels.ViewModels
 
         public ICommand TakePhotoCommand => new Command(TakePhotoCommandExecute);
 
-        public StartViewModel(IMvxNavigationService navigationService)
+        public StartViewModel(IMvxNavigationService navigationService, IRestCallsService restService)
         {
+            this.restService = restService;
             this.navigationService = navigationService;
         }
 
@@ -39,12 +42,13 @@ namespace ViewModels.ViewModels
             var selectedImage = getFromGallery ? await CrossMedia.Current.PickPhotoAsync()
                                                : await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions());
 
+            var s = await restService.AnalyzeFace(selectedImage);
             //user did not select anything
-            if (selectedImage != null)
-            {
-                var selectedImageSource = ImageSource.FromStream(() => selectedImage.GetStream());
-                await navigationService.Navigate<DisplayImagesViewModel, ImageSource>(selectedImageSource);
-            }
+            //if (selectedImage != null)
+            //{
+            //    var selectedImageSource = ImageSource.FromStream(() => selectedImage.GetStream());
+            //    await navigationService.Navigate<DisplayImagesViewModel, ImageSource>(selectedImageSource);
+            //}
         }
 
         private async Task InitMedia()

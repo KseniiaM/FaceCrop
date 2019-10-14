@@ -8,10 +8,15 @@
              mc:Ignorable="d"
              x:Class="FaceCrop.Views.DisplayImagesPage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Margin="10, 40">
+
+            <ActivityIndicator Color="Blue"
+                               IsRunning="{Binding IsProcessingPicture}"/>
+            
             <Image Source="{Binding SelectedImageSource}"
-                   HeightRequest="200"
-                   WidthRequest="200" />
+                   HeightRequest="300"
+                   WidthRequest="300" />
+            
         </StackLayout>
     </ContentPage.Content>
 </views:MvxContentPage>

@@ -1,4 +1,5 @@
 ﻿using System;
+using MvvmCross.IoC;
 using MvvmCross.ViewModels;
 using ViewModels.ViewModels;
 
@@ -11,6 +12,11 @@ namespace ViewModels
             base.Initialize();
 
             RegisterAppStart<StartViewModel>();
+
+            CreatableTypes()
+                .EndingWith("Service")
+                .AsInterfaces()
+                .RegisterAsSingleton();
         }
     }
 }

@@ -10,7 +10,7 @@
     <ContentPage.Content>
         
         <StackLayout Spacing="20"
-                     VerticalOptions="CenterAndExpand">
+                     Margin="10, 40">
             
 <!--TODO create a style for buttons and text -->
             <Label Text="Face Crop"
