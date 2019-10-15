@@ -1,4 +1,6 @@
-﻿using Plugin.Media.Abstractions;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Plugin.Media.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,7 +61,9 @@ namespace ViewModels.Services
 
                 // Get the JSON response.
                 string contentString = await response.Content.ReadAsStringAsync();
-
+                var rez = JsonConvert.DeserializeObject(contentString);
+                var jarr = rez as JArray;
+                var rect = jarr["faceRectangle"];
                 return contentString;
             }
         }
