@@ -13,6 +13,7 @@ namespace ViewModels.ViewModels
     {
         private readonly IMvxNavigationService navigationService;
         private readonly IRestCallsService restService;
+        private readonly IJsonParserService jsonParserService;
 
         private bool isMediaInitialized;
 
@@ -20,10 +21,13 @@ namespace ViewModels.ViewModels
 
         public ICommand TakePhotoCommand => new Command(TakePhotoCommandExecute);
 
-        public StartViewModel(IMvxNavigationService navigationService, IRestCallsService restService)
+        public StartViewModel(IMvxNavigationService navigationService,
+                              IRestCallsService restService,
+                              IJsonParserService jsonParserService)
         {
             this.restService = restService;
             this.navigationService = navigationService;
+            this.jsonParserService = jsonParserService;
         }
 
         private async void PickFromGalleryCommandExecute(object parameter)
@@ -42,7 +46,8 @@ namespace ViewModels.ViewModels
             var selectedImage = getFromGallery ? await CrossMedia.Current.PickPhotoAsync()
                                                : await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions());
 
-            var s = await restService.AnalyzeFace(selectedImage);
+            var json = await restService.PostImageForFaceDetection(selectedImage);
+            var faces = jsonParserService.ConvertJsonToFaceModels(json);
             //user did not select anything
             //if (selectedImage != null)
             //{

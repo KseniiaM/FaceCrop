@@ -4,9 +4,8 @@ using System.Text;
 
 namespace ViewModels.Models
 {
-    class FaceRectangleModel
+    public class FaceRectangleModel
     {
-        public string Orientation { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Width { get; set; }

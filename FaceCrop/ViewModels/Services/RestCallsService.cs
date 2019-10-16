@@ -4,17 +4,25 @@ using Plugin.Media.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModels.Models;
+using Xamarin.Forms.Internals;
 
 namespace ViewModels.Services
 {
     class RestCallsService : IRestCallsService
     {
-        const string subscriptionKey = "5f4794c78f6f4326aa4ec9c35f1a13c3";
-        const string uriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
+        const string KeyHeader = "Ocp-Apim-Subscription-Key";
+        const string SubscriptionKey = "5f4794c78f6f4326aa4ec9c35f1a13c3";
+        const string UriBase = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
+        const string ContentType = "application/octet-stream";
+        const string requestParameters = "returnFaceId=true&returnFaceLandmarks=false" +
+                                         "&returnFaceAttributes=age," +
+                                         "emotion";
 
         private HttpClient httpClient;
 
@@ -31,40 +39,24 @@ namespace ViewModels.Services
             }
         }
 
-        public async Task<string> AnalyzeFace(MediaFile img)
+        public async Task<string> PostImageForFaceDetection(MediaFile img)
         {
-            HttpClient.DefaultRequestHeaders.Add(
-                "Ocp-Apim-Subscription-Key", subscriptionKey);
-            string requestParameters = "returnFaceId=true&returnFaceLandmarks=false" +
-                "&returnFaceAttributes=age,"+
-                "emotion";
-            byte[] coded;
-            using (var memoryStream = new MemoryStream())
+            HttpClient.DefaultRequestHeaders.Add(KeyHeader, SubscriptionKey);
+            var imageConverted = ByteUtils.ConvertMediaFileToByteArray(img);
+            string uri = UriBase + "?" + requestParameters;
+
+            using (ByteArrayContent content = new ByteArrayContent(imageConverted))
             {
-                img.GetStream().CopyTo(memoryStream);
-                img.Dispose();
-                coded = memoryStream.ToArray();
-            }
+                content.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
 
-            string uri = uriBase + "?" + requestParameters;
-
-            using (ByteArrayContent content = new ByteArrayContent(coded))
-            {
-                // This example uses content type "application/octet-stream".
-                // The other content types you can use are "application/json"
-                // and "multipart/form-data".
-                content.Headers.ContentType =
-                    new MediaTypeHeaderValue("application/octet-stream");
-
-                // Execute the REST API call.
                 var response = await HttpClient.PostAsync(uri, content);
 
-                // Get the JSON response.
-                string contentString = await response.Content.ReadAsStringAsync();
-                var rez = JsonConvert.DeserializeObject(contentString);
-                var jarr = rez as JArray;
-                var rect = jarr["faceRectangle"];
-                return contentString;
+                if(response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+
+                return string.Empty;
             }
         }
     }

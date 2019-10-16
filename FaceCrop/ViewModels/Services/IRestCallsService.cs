@@ -8,6 +8,6 @@ namespace ViewModels.Services
 {
     public interface IRestCallsService
     {
-        Task<string> AnalyzeFace(MediaFile img);
+        Task<string> PostImageForFaceDetection(MediaFile img);
     }
 }
