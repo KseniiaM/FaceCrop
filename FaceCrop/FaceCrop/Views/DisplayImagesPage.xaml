@@ -8,15 +8,32 @@
              mc:Ignorable="d"
              x:Class="FaceCrop.Views.DisplayImagesPage">
     <ContentPage.Content>
-        <StackLayout Margin="10, 40">
+        <Grid Margin="10"
+              VerticalOptions="CenterAndExpand" 
+              HorizontalOptions="CenterAndExpand">
 
-            <ActivityIndicator Color="Blue"
-                               IsRunning="{Binding IsProcessingPicture}"/>
+            <ListView ItemsSource="{Binding SelectedImageSources}"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand"
+                      HasUnevenRows="true"
+                      SeparatorVisibility="None"
+                      Margin="10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout HeightRequest="300">
+                                <Image Source="{Binding .}"
+                                   Aspect="AspectFit"
+                                   HorizontalOptions="FillAndExpand"
+                                   VerticalOptions="FillAndExpand"
+                                   Margin="15" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
             
-            <Image Source="{Binding SelectedImageSource}"
-                   HeightRequest="300"
-                   WidthRequest="300" />
             
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </views:MvxContentPage>

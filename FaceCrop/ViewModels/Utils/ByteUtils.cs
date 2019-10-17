@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Plugin.Media.Abstractions;
+using Xamarin.Forms;
 
 namespace ViewModels
 {
@@ -9,10 +10,10 @@ namespace ViewModels
         public static byte[] ConvertMediaFileToByteArray(MediaFile mediaFile)
         {
             byte[] result;
+
             using (var memoryStream = new MemoryStream())
             {
                 mediaFile.GetStream().CopyTo(memoryStream);
-                mediaFile.Dispose();
                 result = memoryStream.ToArray();
             }
 

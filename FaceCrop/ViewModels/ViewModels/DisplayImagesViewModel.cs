@@ -1,19 +1,25 @@
 ﻿using MvvmCross.ViewModels;
+using Plugin.Media.Abstractions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using ViewModels.Services;
 using Xamarin.Forms;
 
 namespace ViewModels.ViewModels
 {
-    class DisplayImagesViewModel : MvxViewModel<ImageSource>
+    class DisplayImagesViewModel : MvxViewModel<MediaFile>
     {
-        private readonly IRestService restService;
+        private readonly IRestCallsService restService;
+        private readonly IJsonParserService jsonParserService;
 
-        private ImageSource selectedImageSource;
+        private List<ImageSource> selectedImageSources;
         private bool isProcessingPicture;
-        public ImageSource SelectedImageSource
+        private MediaFile sourceMediaFile;
+
+        public List<ImageSource> SelectedImageSources
         {
-            get => selectedImageSource;
-            set => SetProperty(ref selectedImageSource, value);
+            get => selectedImageSources;
+            set => SetProperty(ref selectedImageSources, value);
         }
 
         public bool IsProcessingPicture
@@ -22,24 +28,29 @@ namespace ViewModels.ViewModels
             set => SetProperty(ref isProcessingPicture, value);
         }
 
-        public DisplayImagesViewModel(IRestService restService)
+        public DisplayImagesViewModel(IRestCallsService restService,
+                                      IJsonParserService jsonParserService)
         {
             this.restService = restService;
+            this.jsonParserService = jsonParserService;
         }
 
-        public override void Prepare(ImageSource parameter)
+        public override void Prepare(MediaFile parameter)
         {
-            SelectedImageSource = parameter;
+            sourceMediaFile = parameter;
         }
 
-        public async override void ViewAppearing()
+        public async override Task Initialize()
         {
-            base.ViewAppearing();
+            //TODO move logic for getting json to previous screen
+            await base.Initialize();
             IsProcessingPicture = true;
-            //make a normal uri 
-            var rez = await restService.GetImageDataFromUrl("dsadsa");
-            var e = await rez.Content.ReadAsStringAsync();
+            var json = await restService.PostImageForFaceDetection(sourceMediaFile);
+            var faces = jsonParserService.ConvertJsonToFaceModels(json);
+            var croppedFaces = DependencyService.Get<IImageCropService>().CropImage(sourceMediaFile, faces);
+            SelectedImageSources = croppedFaces;
+            SelectedImageSources.AddRange(croppedFaces);
             IsProcessingPicture = false;
-         }
+        }
     }
 }

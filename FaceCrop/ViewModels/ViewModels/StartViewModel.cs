@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
@@ -12,22 +13,15 @@ namespace ViewModels.ViewModels
     public class StartViewModel : MvxViewModel
     {
         private readonly IMvxNavigationService navigationService;
-        private readonly IRestCallsService restService;
-        private readonly IJsonParserService jsonParserService;
 
         private bool isMediaInitialized;
 
         public ICommand PickFromGalleryCommand => new Command(PickFromGalleryCommandExecute);
-
         public ICommand TakePhotoCommand => new Command(TakePhotoCommandExecute);
 
-        public StartViewModel(IMvxNavigationService navigationService,
-                              IRestCallsService restService,
-                              IJsonParserService jsonParserService)
+        public StartViewModel(IMvxNavigationService navigationService)
         {
-            this.restService = restService;
             this.navigationService = navigationService;
-            this.jsonParserService = jsonParserService;
         }
 
         private async void PickFromGalleryCommandExecute(object parameter)
@@ -46,14 +40,11 @@ namespace ViewModels.ViewModels
             var selectedImage = getFromGallery ? await CrossMedia.Current.PickPhotoAsync()
                                                : await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions());
 
-            var json = await restService.PostImageForFaceDetection(selectedImage);
-            var faces = jsonParserService.ConvertJsonToFaceModels(json);
-            //user did not select anything
-            //if (selectedImage != null)
-            //{
-            //    var selectedImageSource = ImageSource.FromStream(() => selectedImage.GetStream());
-            //    await navigationService.Navigate<DisplayImagesViewModel, ImageSource>(selectedImageSource);
-            //}
+            //user did not select anything so image = null
+            if (selectedImage != null)
+            {
+                await navigationService.Navigate<DisplayImagesViewModel, MediaFile>(selectedImage);
+            }
         }
 
         private async Task InitMedia()

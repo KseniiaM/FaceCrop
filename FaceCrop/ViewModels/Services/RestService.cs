@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Plugin.Media.Abstractions;
-using ViewModels.Models;
-using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
-
 namespace ViewModels.Services
 {
-    class RestService : IRestService
+    class RestService
     {
         private const string BaseUrl = "https://apicloud-facerect.p.rapidapi.com/process-url.json?url=";
 
