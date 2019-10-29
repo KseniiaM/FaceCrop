@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,9 +7,16 @@ namespace ViewModels.Models
 {
     public class FaceRectangleModel
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        [JsonProperty("top")]
+        public int Top { get; set; }
+
+        [JsonProperty("left")]
+        public int Left { get; set; }
+
+        [JsonProperty("width")]
         public int Width { get; set; }
+
+        [JsonProperty("height")]
         public int Height { get; set; }
     }
 }

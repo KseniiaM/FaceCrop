@@ -1,56 +1,61 @@
 ﻿using MvvmCross.ViewModels;
 using Plugin.Media.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using ViewModels.Models;
 using ViewModels.Services;
 using Xamarin.Forms;
 
 namespace ViewModels.ViewModels
 {
-    class DisplayImagesViewModel : MvxViewModel<MediaFile>
+    class DisplayImagesViewModel : MvxViewModel<FaceRectangleCollectionModel>
     {
-        private readonly IRestCallsService restService;
-        private readonly IJsonParserService jsonParserService;
+        public ICommand FaceSelectedCommand => new Command(FaceSelectedCommandExecute);
 
-        private List<ImageSource> selectedImageSources;
-        private bool isProcessingPicture;
-        private MediaFile sourceMediaFile;
-
-        public List<ImageSource> SelectedImageSources
+        private void FaceSelectedCommandExecute(object obj)
         {
-            get => selectedImageSources;
-            set => SetProperty(ref selectedImageSources, value);
+            
         }
 
-        public bool IsProcessingPicture
+        //private List<ImageSource> selectedImageSources;
+
+        //public List<ImageSource> SelectedImageSources
+        //{
+        //    get => selectedImageSources;
+        //    set => SetProperty(ref selectedImageSources, value);
+        //}
+
+        //public bool IsProcessingPicture
+        //{
+        //    get => isProcessingPicture;
+        //    set => SetProperty(ref isProcessingPicture, value);
+        //}
+
+        private ImageSource selectedFaces;
+        private List<FaceRectangleModel> rectangles;
+
+        public ImageSource SelectedFaces
         {
-            get => isProcessingPicture;
-            set => SetProperty(ref isProcessingPicture, value);
+            get => selectedFaces;
+            set => SetProperty(ref selectedFaces, value);
         }
 
-        public DisplayImagesViewModel(IRestCallsService restService,
-                                      IJsonParserService jsonParserService)
+        public List<FaceRectangleModel> Rectangles
         {
-            this.restService = restService;
-            this.jsonParserService = jsonParserService;
+            get => rectangles;
+            set => SetProperty(ref rectangles, value);
         }
 
-        public override void Prepare(MediaFile parameter)
+        public DisplayImagesViewModel()
         {
-            sourceMediaFile = parameter;
         }
 
-        public async override Task Initialize()
+        public override void Prepare(FaceRectangleCollectionModel parameter)
         {
-            //TODO move logic for getting json to previous screen
-            await base.Initialize();
-            IsProcessingPicture = true;
-            var json = await restService.PostImageForFaceDetection(sourceMediaFile);
-            var faces = jsonParserService.ConvertJsonToFaceModels(json);
-            var croppedFaces = DependencyService.Get<IImageCropService>().CropImage(sourceMediaFile, faces);
-            SelectedImageSources = croppedFaces;
-            SelectedImageSources.AddRange(croppedFaces);
-            IsProcessingPicture = false;
+            SelectedFaces = parameter.OriginalImage;
+            Rectangles = parameter.RectangleModels;
         }
     }
 }

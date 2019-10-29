@@ -7,5 +7,7 @@ namespace ViewModels.Services
     public interface IJsonParserService
     {
         List<FaceRectangleModel> ConvertJsonToFaceModels(string jsonString);
+
+        List<FaceRectangleModel> ReturnEmulatedFaceModels();
     }
 }

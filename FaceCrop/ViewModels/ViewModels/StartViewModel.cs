@@ -5,6 +5,7 @@ using MvvmCross.Navigation;
 using MvvmCross.ViewModels;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using ViewModels.Models;
 using ViewModels.Services;
 using Xamarin.Forms;
 
@@ -12,6 +13,8 @@ namespace ViewModels.ViewModels
 {
     public class StartViewModel : MvxViewModel
     {
+        private readonly IRestCallsService restService;
+        private readonly IJsonParserService jsonParserService;
         private readonly IMvxNavigationService navigationService;
 
         private bool isMediaInitialized;
@@ -19,9 +22,13 @@ namespace ViewModels.ViewModels
         public ICommand PickFromGalleryCommand => new Command(PickFromGalleryCommandExecute);
         public ICommand TakePhotoCommand => new Command(TakePhotoCommandExecute);
 
-        public StartViewModel(IMvxNavigationService navigationService)
+        public StartViewModel(IMvxNavigationService navigationService,
+                              IRestCallsService restService,
+                              IJsonParserService jsonParserService)
         {
             this.navigationService = navigationService;
+            this.restService = restService;
+            this.jsonParserService = jsonParserService;
         }
 
         private async void PickFromGalleryCommandExecute(object parameter)
@@ -43,7 +50,20 @@ namespace ViewModels.ViewModels
             //user did not select anything so image = null
             if (selectedImage != null)
             {
-                await navigationService.Navigate<DisplayImagesViewModel, MediaFile>(selectedImage);
+                //TODO this one should be uncommented and work if you generate a new key
+                //var json = await restService.PostImageForFaceDetection(sourceMediaFile);
+
+                var faces = jsonParserService.ReturnEmulatedFaceModels();
+                //var croppedFaces = DependencyService.Get<IImageCropService>().CropImages(selectedImage, faces);
+                var croppedFacesImage = DependencyService.Get<IImageCropService>().DrawFaceRactangles(selectedImage, faces);
+
+                var faceModel = new FaceRectangleCollectionModel()
+                {
+                    OriginalImage = croppedFacesImage,
+                    RectangleModels = faces
+                };
+
+                await navigationService.Navigate<DisplayImagesViewModel, FaceRectangleCollectionModel>(faceModel);
             }
         }
 

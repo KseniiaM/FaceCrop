@@ -8,6 +8,8 @@ namespace ViewModels.Services
 {
     public interface IImageCropService
     {
-        List<ImageSource> CropImage(MediaFile mediaFile, List<FaceRectangleModel> faceRectangleModel);
+        ImageSource DrawFaceRactangles(MediaFile mediaFile, List<FaceRectangleModel> faces);
+
+        List<ImageSource> CropImages(MediaFile mediaFile, List<FaceRectangleModel> faceRectangleModel);
     }
 }

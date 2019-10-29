@@ -6,13 +6,21 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             xmlns:controls="clr-namespace:FaceCrop.CustomControls"
              x:Class="FaceCrop.Views.DisplayImagesPage">
     <ContentPage.Content>
         <Grid Margin="10"
-              VerticalOptions="CenterAndExpand" 
-              HorizontalOptions="CenterAndExpand">
+              VerticalOptions="FillAndExpand" 
+              HorizontalOptions="FillAndExpand">
 
-            <ListView ItemsSource="{Binding SelectedImageSources}"
+            <controls:CustomImageView 
+                       Source="{Binding SelectedFaces}"
+                       BackgroundColor="Teal"
+                       Aspect="AspectFit"
+                       RectangleCollection="{Binding Rectangles}">
+            </controls:CustomImageView>
+
+            <!--<ListView ItemsSource="{Binding SelectedImageSources}"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand"
                       HasUnevenRows="true"
@@ -31,7 +39,7 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-            </ListView>
+            </ListView>-->
             
             
         </Grid>
