@@ -91,7 +91,9 @@
     <Compile Include="Renderers\CustomImageViewRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DrawingService.cs" />
     <Compile Include="Services\ImageCropService.cs" />
+    <Compile Include="Utils\BitmapUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

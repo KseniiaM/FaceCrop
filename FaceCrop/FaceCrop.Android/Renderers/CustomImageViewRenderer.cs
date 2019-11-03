@@ -2,23 +2,59 @@
 using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms;
 using FaceCrop.Droid.Renderers;
-using System.ComponentModel;
 using Android.Graphics;
 using FaceCrop.CustomControls;
 using Android.Graphics.Drawables;
 using ViewModels.Models;
-using System.Collections.Generic;
+using System.Linq;
+using FaceCrop.Droid.Services;
+using System.ComponentModel;
+using Android.Views;
 
 [assembly: ExportRenderer(typeof(CustomImageView), typeof(CustomImageViewRenderer))]
 namespace FaceCrop.Droid.Renderers
 {
     class CustomImageViewRenderer : ImageRenderer
     {
-        private List<FaceRectangleModel> rectangles;
+        private CustomImageView element;
+        private FaceRectangleModel selectedRectangle;
+        private Bitmap originalImage;
 
-        public CustomImageViewRenderer(Context context) : base(context)
+        private FaceRectangleModel SelectedRectangle
         {
+            get
+            {
+                return selectedRectangle;
+            }
+            set
+            {
+                selectedRectangle = value;
 
+                if(selectedRectangle != null)
+                {
+                    DrawDarkenFrame();
+                }
+            }
+        }
+
+        private Bitmap OriginalImage
+        {
+            get
+            {
+                if (originalImage == null)
+                {
+                    originalImage = ((BitmapDrawable)Control.Drawable).Bitmap;
+                }
+
+                return originalImage;
+            }
+        }
+
+        private readonly DrawingService drawingService;
+
+        public CustomImageViewRenderer(Context context) : base(context) 
+        {
+            drawingService = new DrawingService();
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Image> e)
@@ -27,8 +63,17 @@ namespace FaceCrop.Droid.Renderers
 
             if (e.NewElement != null && Control != null)
             {
+                element = e.NewElement as CustomImageView;
                 Control.Touch += OnImageClicked;
             }
+        }
+
+        private RectF ConvertSelectedRectangleModelToRectF()
+        {
+            return new RectF(SelectedRectangle.Left, 
+                             SelectedRectangle.Top, 
+                             SelectedRectangle.Left + SelectedRectangle.Width, 
+                             SelectedRectangle.Top + SelectedRectangle.Height);
         }
 
         protected override void Dispose(bool disposing)
@@ -43,26 +88,39 @@ namespace FaceCrop.Droid.Renderers
 
             base.Dispose(disposing);
         }
-        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(sender, e);
-
-            //TODO it is never set, find out why and fix
-            if (e.PropertyName == CustomImageView.RectangleCollectionProperty.PropertyName)
-            {
-                rectangles = ((CustomImageView)sender).RectangleCollection;
-            }
-        }
 
         private void OnImageClicked(object sender, TouchEventArgs e)
         {
             var point = GetClickPointAsBitmapCoordinates(e);
+
+            //a valid point on screen was selected (not bounds)
+            if (point != Xamarin.Forms.Point.Zero)
+            {
+                SelectedRectangle = FindClickedRectangle(point);
+            }
         }
 
+        private void DrawDarkenFrame()
+        {
+            var rect = ConvertSelectedRectangleModelToRectF();
+            var mask = drawingService.CreateHalfTrasparentBitmap(OriginalImage, rect);
+            var result = drawingService.MergeBitmaps(OriginalImage, mask);
+            Control.SetImageDrawable(new BitmapDrawable(result));
+        }
+
+        private FaceRectangleModel FindClickedRectangle(Xamarin.Forms.Point point)
+        {
+            return element.RectangleCollection.FirstOrDefault(rect =>
+                        IsWithinSelectedRange(point.X, rect.Left, rect.Left + rect.Width) &&
+                        IsWithinSelectedRange(point.Y, rect.Top, rect.Top + rect.Height));
+        }
+
+        #region clickParser
         private Xamarin.Forms.Point GetClickPointAsBitmapCoordinates(TouchEventArgs e)
         {
             Bitmap bitmap = ((BitmapDrawable)Control.Drawable).Bitmap;
             bool isResolvedOnHeight;
+
             int bitmapScaleRatio = ResolveRatioOfBitmapScaling(bitmap, out isResolvedOnHeight);
 
             if (isResolvedOnHeight)
@@ -73,6 +131,11 @@ namespace FaceCrop.Droid.Renderers
             {
                 return HandleClickForHeightBoundsImage(bitmap, bitmapScaleRatio, e);
             }
+        }
+
+        private bool IsWithinSelectedRange(double value, int lowerRange, int upperRange)
+        {
+            return value >= lowerRange && value <= upperRange;
         }
 
         private float CalculateRatio(int width, int height)
@@ -135,5 +198,6 @@ namespace FaceCrop.Droid.Renderers
             //now convert to bitmap coord
             return new Xamarin.Forms.Point(xCoord / scale, yCoord / scale);
         }
+        #endregion
     }
 }

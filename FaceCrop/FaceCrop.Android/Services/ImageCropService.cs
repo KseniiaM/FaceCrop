@@ -1,22 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
 using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using FaceCrop.Droid.Services;
+using FaceCrop.Droid.Utils;
 using Plugin.Media.Abstractions;
 using ViewModels.Models;
 using ViewModels.Services;
 using Xamarin.Forms;
-using static Android.Graphics.Bitmap;
 
 [assembly: Dependency(typeof(ImageCropService))]
 namespace FaceCrop.Droid.Services
@@ -35,13 +26,14 @@ namespace FaceCrop.Droid.Services
                                                faceModel.Width,
                                                faceModel.Height);
 
-                return ConvertBitmapToImageSource(cropped);
+                return BitmapUtils.ConvertBitmapToImageSource(cropped);
             }).ToList();
         }
 
         public ImageSource DrawFaceRactangles(MediaFile mediaFile, List<FaceRectangleModel> faces)
         {
-            var bitmap = ConvertToMutableBitmap(BitmapFactory.DecodeStream(mediaFile.GetStream()));
+            var bitmap = BitmapUtils.ConvertToMutableBitmap(BitmapFactory.DecodeStream(mediaFile.GetStream()));
+            bitmap.SetConfig(Bitmap.Config.Argb8888);
             Canvas canvas = new Canvas(bitmap);
 
             foreach (var face in faces)
@@ -49,19 +41,7 @@ namespace FaceCrop.Droid.Services
                 DrawRectangle(face, canvas);
             }
 
-            return ConvertBitmapToImageSource(bitmap);
-        }
-
-        private Bitmap ConvertToMutableBitmap(Bitmap bitmap)
-        {
-            Config bitmapConfig = bitmap.GetConfig();
-
-            if (bitmapConfig == null)
-            {
-                bitmapConfig = Config.Argb8888;
-            }
-
-            return bitmap.Copy(bitmapConfig, true);
+            return BitmapUtils.ConvertBitmapToImageSource(bitmap);
         }
 
         private void DrawRectangle(FaceRectangleModel face, Canvas canvas)
@@ -74,15 +54,6 @@ namespace FaceCrop.Droid.Services
             paint.Color = new Android.Graphics.Color(255, 255, 255);
             paint.SetStyle(Paint.Style.Stroke);
             canvas.DrawRect(bounds, paint);
-        }
-
-        private ImageSource ConvertBitmapToImageSource(Bitmap bitmap)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                bitmap.Compress(Bitmap.CompressFormat.Jpeg, 100, stream);
-                return ImageSource.FromStream(() => new MemoryStream(stream.ToArray()));
-            }
         }
     }
 }
