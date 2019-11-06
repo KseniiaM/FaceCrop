@@ -8,17 +8,20 @@ using Android.Graphics.Drawables;
 using ViewModels.Models;
 using System.Linq;
 using FaceCrop.Droid.Services;
-using System.ComponentModel;
 using Android.Views;
+using static Android.Views.ScaleGestureDetector;
 
 [assembly: ExportRenderer(typeof(CustomImageView), typeof(CustomImageViewRenderer))]
 namespace FaceCrop.Droid.Renderers
 {
-    class CustomImageViewRenderer : ImageRenderer
+    class CustomImageViewRenderer : ImageRenderer, IOnScaleGestureListener
     {
         private CustomImageView element;
         private FaceRectangleModel selectedRectangle;
         private Bitmap originalImage;
+        private int bitmapScaleRatio;
+
+        private ScaleGestureDetector scaleGestureDetector;
 
         private FaceRectangleModel SelectedRectangle
         {
@@ -52,11 +55,12 @@ namespace FaceCrop.Droid.Renderers
 
         private readonly DrawingService drawingService;
 
-        public CustomImageViewRenderer(Context context) : base(context) 
+        public CustomImageViewRenderer(Context context) : base(context)
         {
             drawingService = new DrawingService();
+            scaleGestureDetector = new ScaleGestureDetector(context, this);
         }
-
+        
         protected override void OnElementChanged(ElementChangedEventArgs<Image> e)
         {
             base.OnElementChanged(e);
@@ -89,12 +93,23 @@ namespace FaceCrop.Droid.Renderers
             base.Dispose(disposing);
         }
 
+        public override bool DispatchTouchEvent(MotionEvent e)
+        {
+            if(SelectedRectangle != null)
+            {
+                scaleGestureDetector.OnTouchEvent(e);
+                HandleDragAction(e);
+            }
+            
+            return base.DispatchTouchEvent(e);
+        }
+
         private void OnImageClicked(object sender, TouchEventArgs e)
         {
             var point = GetClickPointAsBitmapCoordinates(e);
 
             //a valid point on screen was selected (not bounds)
-            if (point != Xamarin.Forms.Point.Zero)
+            if (point != Xamarin.Forms.Point.Zero && SelectedRectangle == null)
             {
                 SelectedRectangle = FindClickedRectangle(point);
             }
@@ -121,7 +136,7 @@ namespace FaceCrop.Droid.Renderers
             Bitmap bitmap = ((BitmapDrawable)Control.Drawable).Bitmap;
             bool isResolvedOnHeight;
 
-            int bitmapScaleRatio = ResolveRatioOfBitmapScaling(bitmap, out isResolvedOnHeight);
+            bitmapScaleRatio = ResolveRatioOfBitmapScaling(bitmap, out isResolvedOnHeight);
 
             if (isResolvedOnHeight)
             {
@@ -197,6 +212,98 @@ namespace FaceCrop.Droid.Renderers
 
             //now convert to bitmap coord
             return new Xamarin.Forms.Point(xCoord / scale, yCoord / scale);
+        }
+        #endregion
+
+
+        #region FrameMoving
+        public bool OnScale(ScaleGestureDetector detector)
+        {
+            if (detector.ScaleFactor != 1)
+            {
+                var differenceX = CountScaleDifference(detector.CurrentSpanX, detector.PreviousSpanX);
+                var differenceY = CountScaleDifference(detector.CurrentSpanY, detector.PreviousSpanY);
+
+                var rect = new FaceRectangleModel()
+                {
+                    Left = SelectedRectangle.Left - differenceX / 2,
+                    Top = SelectedRectangle.Top - differenceY / 2,
+                    Width = SelectedRectangle.Width + differenceX,
+                    Height = SelectedRectangle.Height + differenceY
+                };
+
+                SelectedRectangle = rect;
+            }
+
+            return true;
+        }
+
+        public void OnDrag(int oldX, int newX, int oldY, int newY)
+        {
+            var xDiff = newX - oldX;
+            var yDiff = newY - oldY;
+
+            var rect = new FaceRectangleModel()
+            {
+                Left = SelectedRectangle.Left + xDiff,
+                Top = SelectedRectangle.Top + yDiff,
+                Width = SelectedRectangle.Width,
+                Height = SelectedRectangle.Height
+            };
+
+            SelectedRectangle = rect;
+        }
+
+        private int CountScaleDifference(float newDistance, float oldDistance)
+        {
+            return  (int) (newDistance / bitmapScaleRatio - oldDistance / bitmapScaleRatio);
+        }
+
+        public bool OnScaleBegin(ScaleGestureDetector detector)
+        {
+            return true;
+        }
+
+        public void OnScaleEnd(ScaleGestureDetector detector)
+        {
+        }
+
+        int previousX = 0;
+        int previousY = 0;
+
+        public void HandleDragAction(MotionEvent e)
+        {
+            var newX = 0;
+            var newY = 0;
+
+            switch(e.Action)
+            {
+                case MotionEventActions.Down:
+                {
+                    previousX = (int) e.GetX() / bitmapScaleRatio;
+                    previousY = (int) e.GetY() / bitmapScaleRatio;
+
+                    break;
+                }
+                case MotionEventActions.Move:
+                case MotionEventActions.Up:
+                {
+                    newX = (int)e.GetX() / bitmapScaleRatio;
+                    newY = (int)e.GetY() / bitmapScaleRatio;
+
+                    if ((previousX == newX && previousY == newY) || (previousX == 0 && previousY == 0))
+                    {
+                        return;
+                    }
+
+                    OnDrag(previousX, newX, previousY, newY);
+
+                    previousX = newX;
+                    previousY = newY;
+
+                    break;
+                }
+            }
         }
         #endregion
     }
