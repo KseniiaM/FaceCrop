@@ -10,6 +10,9 @@ using System.Linq;
 using FaceCrop.Droid.Services;
 using Android.Views;
 using static Android.Views.ScaleGestureDetector;
+using FaceCrop.Behaviors;
+using FaceCrop.Droid.Utils;
+using System.ComponentModel;
 
 [assembly: ExportRenderer(typeof(CustomImageView), typeof(CustomImageViewRenderer))]
 namespace FaceCrop.Droid.Renderers
@@ -36,6 +39,10 @@ namespace FaceCrop.Droid.Renderers
                 if(selectedRectangle != null)
                 {
                     DrawDarkenFrame();
+                }
+                else
+                {
+                    Element.Source = BitmapUtils.ConvertBitmapToImageSource(OriginalImage);
                 }
             }
         }
@@ -69,7 +76,19 @@ namespace FaceCrop.Droid.Renderers
             {
                 element = e.NewElement as CustomImageView;
                 Control.Touch += OnImageClicked;
+                
+                var refreshBehavior = (CustomImageViewRefreshBehavior)element.Behaviors
+                            .FirstOrDefault(behavior => behavior is CustomImageViewRefreshBehavior);
+
+                refreshBehavior.RefreshSelectionEventHandler += RefreshSelectionEventHandler;
+
+                element.Source = ImageCropService.DrawFaceRactangles(OriginalImage, element.RectangleCollection);
             }
+        }
+
+        private void RefreshSelectionEventHandler()
+        {
+            SelectedRectangle = null;
         }
 
         private RectF ConvertSelectedRectangleModelToRectF()
@@ -87,6 +106,10 @@ namespace FaceCrop.Droid.Renderers
                 if (Control != null)
                 {
                     Control.Touch -= OnImageClicked;
+                    var refreshBehavior = (CustomImageViewRefreshBehavior)element.Behaviors
+                            .FirstOrDefault(behavior => behavior is CustomImageViewRefreshBehavior);
+
+                    refreshBehavior.RefreshSelectionEventHandler -= RefreshSelectionEventHandler;
                 }
             }
 

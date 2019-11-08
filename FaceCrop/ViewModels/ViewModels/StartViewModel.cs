@@ -55,11 +55,11 @@ namespace ViewModels.ViewModels
 
                 var faces = jsonParserService.ReturnEmulatedFaceModels();
                 //var croppedFaces = DependencyService.Get<IImageCropService>().CropImages(selectedImage, faces);
-                var croppedFacesImage = DependencyService.Get<IImageCropService>().DrawFaceRactangles(selectedImage, faces);
+                //var croppedFacesImage = DependencyService.Get<IImageCropService>().DrawFaceRactangles(selectedImage, faces);
 
                 var faceModel = new FaceRectangleCollectionModel()
                 {
-                    OriginalImage = croppedFacesImage,
+                    OriginalImage = ImageSource.FromStream(selectedImage.GetStream),
                     RectangleModels = faces
                 };
 

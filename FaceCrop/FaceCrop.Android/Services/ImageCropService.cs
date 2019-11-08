@@ -12,9 +12,9 @@ using Xamarin.Forms;
 [assembly: Dependency(typeof(ImageCropService))]
 namespace FaceCrop.Droid.Services
 {
-    class ImageCropService : IImageCropService
+    static class ImageCropService
     {
-        public List<ImageSource> CropImages(MediaFile mediaFile, List<FaceRectangleModel> faces)
+        public static List<ImageSource> CropImages(MediaFile mediaFile, List<FaceRectangleModel> faces)
         {
             var bitmap = BitmapFactory.DecodeStream(mediaFile.GetStream());
             
@@ -30,21 +30,21 @@ namespace FaceCrop.Droid.Services
             }).ToList();
         }
 
-        public ImageSource DrawFaceRactangles(MediaFile mediaFile, List<FaceRectangleModel> faces)
+        public static ImageSource DrawFaceRactangles(Bitmap bitmap, List<FaceRectangleModel> faces)
         {
-            var bitmap = BitmapUtils.ConvertToMutableBitmap(BitmapFactory.DecodeStream(mediaFile.GetStream()));
-            bitmap.SetConfig(Bitmap.Config.Argb8888);
-            Canvas canvas = new Canvas(bitmap);
+            var bitmapMutable = BitmapUtils.ConvertToMutableBitmap(bitmap);
+            bitmapMutable.SetConfig(Bitmap.Config.Argb8888);
+            Canvas canvas = new Canvas(bitmapMutable);
 
             foreach (var face in faces)
             {
                 DrawRectangle(face, canvas);
             }
 
-            return BitmapUtils.ConvertBitmapToImageSource(bitmap);
+            return BitmapUtils.ConvertBitmapToImageSource(bitmapMutable);
         }
 
-        private void DrawRectangle(FaceRectangleModel face, Canvas canvas)
+        private static void DrawRectangle(FaceRectangleModel face, Canvas canvas)
         {
             RectF bounds = new RectF(face.Left,
                          face.Top,

@@ -7,18 +7,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:controls="clr-namespace:FaceCrop.CustomControls"
+             xmlns:behaviors="clr-namespace:FaceCrop.Behaviors"
              x:Class="FaceCrop.Views.DisplayImagesPage">
     <ContentPage.Content>
         <Grid Margin="10"
               VerticalOptions="FillAndExpand" 
               HorizontalOptions="FillAndExpand">
 
-            <controls:CustomImageView 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <controls:CustomImageView
+                       Grid.Row="0"
                        Source="{Binding SelectedFaces}"
                        BackgroundColor="Teal"
                        Aspect="AspectFit"
                        RectangleCollection="{Binding Rectangles}">
+                <controls:CustomImageView.Behaviors>
+                    <behaviors:CustomImageViewRefreshBehavior
+                         RefreshButtonPressed="{Binding Source={x:Reference RefreshButton},
+                                                        Path=IsPressed}" />
+                </controls:CustomImageView.Behaviors>
             </controls:CustomImageView>
+
+            <Button
+                x:Name="RefreshButton"
+                Grid.Row="1"
+                VerticalOptions="Start"
+                HorizontalOptions="StartAndExpand"
+                Text="Reset selection"/>
 
             <!--<ListView ItemsSource="{Binding SelectedImageSources}"
                       HorizontalOptions="FillAndExpand"

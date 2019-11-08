@@ -1,17 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Plugin.Media.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using Plugin.Media.Abstractions;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using ViewModels.Models;
-using Xamarin.Forms.Internals;
-
 namespace ViewModels.Services
 {
     class RestCallsService : IRestCallsService
