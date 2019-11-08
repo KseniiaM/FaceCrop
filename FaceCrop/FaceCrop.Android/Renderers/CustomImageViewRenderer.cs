@@ -81,8 +81,6 @@ namespace FaceCrop.Droid.Renderers
                             .FirstOrDefault(behavior => behavior is CustomImageViewRefreshBehavior);
 
                 refreshBehavior.RefreshSelectionEventHandler += RefreshSelectionEventHandler;
-
-                element.Source = ImageCropService.DrawFaceRactangles(OriginalImage, element.RectangleCollection);
             }
         }
 

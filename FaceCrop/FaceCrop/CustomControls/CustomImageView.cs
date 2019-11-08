@@ -8,13 +8,12 @@ namespace FaceCrop.CustomControls
 {
     public class CustomImageView : Image
     {
-        public event Action RectangleCollectionChangedHandler;
+        public StreamImageSource ImageWithNoRectangles;
 
         public static readonly BindableProperty RectangleCollectionProperty = BindableProperty.Create(
                 "RectangleCollection", 
                 typeof(List<FaceRectangleModel>),
-                typeof(CustomImageView),
-                propertyChanged: RectangleCollectionChanged);
+                typeof(CustomImageView));
 
         public List<FaceRectangleModel> RectangleCollection
         {
@@ -22,12 +21,12 @@ namespace FaceCrop.CustomControls
             set { SetValue(RectangleCollectionProperty, value); }
         }
 
-        private static void RectangleCollectionChanged(BindableObject bindable, object oldValue, object newValue)
+        protected override async void OnBindingContextChanged()
         {
-            if (bindable is CustomImageView view)
-            {
-                view.RectangleCollectionChangedHandler?.Invoke();
-            }
+            base.OnBindingContextChanged();
+            var rectangles = await DependencyService.Get<IImageCropService>()
+                                                    .DrawFaceRactangles((StreamImageSource) this.Source, this.RectangleCollection);
+            this.Source = rectangles;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Plugin.Media.Abstractions;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using ViewModels.Models;
 using Xamarin.Forms;
 
@@ -8,7 +9,7 @@ namespace ViewModels.Services
 {
     public interface IImageCropService
     {
-        ImageSource DrawFaceRactangles(MediaFile mediaFile, List<FaceRectangleModel> faces);
+        Task<ImageSource> DrawFaceRactangles(StreamImageSource image, List<FaceRectangleModel> faces);
 
         List<ImageSource> CropImages(MediaFile mediaFile, List<FaceRectangleModel> faceRectangleModel);
     }

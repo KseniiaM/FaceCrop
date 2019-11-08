@@ -1,7 +1,11 @@
 ﻿
+using Android.Content;
 using Android.Graphics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 using static Android.Graphics.Bitmap;
 
 namespace FaceCrop.Droid.Utils
@@ -26,6 +30,16 @@ namespace FaceCrop.Droid.Utils
             {
                 bitmap.Compress(Bitmap.CompressFormat.Jpeg, 100, stream);
                 return ImageSource.FromStream(() => new MemoryStream(stream.ToArray()));
+            }
+        }
+
+        public static async Task<Bitmap> ConvertImageSourceToBitmap(StreamImageSource image)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                var stream = await image.Stream(CancellationToken.None);
+                var bitmap = BitmapFactory.DecodeStream(stream);
+                return bitmap;
             }
         }
     }
