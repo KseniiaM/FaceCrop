@@ -10,9 +10,7 @@ using System.Linq;
 using FaceCrop.Droid.Services;
 using Android.Views;
 using static Android.Views.ScaleGestureDetector;
-using FaceCrop.Behaviors;
 using FaceCrop.Droid.Utils;
-using System.ComponentModel;
 
 [assembly: ExportRenderer(typeof(CustomImageView), typeof(CustomImageViewRenderer))]
 namespace FaceCrop.Droid.Renderers
@@ -20,8 +18,6 @@ namespace FaceCrop.Droid.Renderers
     class CustomImageViewRenderer : ImageRenderer, IOnScaleGestureListener
     {
         private CustomImageView element;
-        private FaceRectangleModel selectedRectangle;
-        private Bitmap originalImage;
         private int bitmapScaleRatio;
 
         private ScaleGestureDetector scaleGestureDetector;
@@ -30,35 +26,27 @@ namespace FaceCrop.Droid.Renderers
         {
             get
             {
-                return selectedRectangle;
+                return element.SelectedRectangle;
             }
             set
             {
-                selectedRectangle = value;
-
-                if(selectedRectangle != null)
-                {
-                    DrawDarkenFrame();
-                }
-                else
-                {
-                    Element.Source = BitmapUtils.ConvertBitmapToImageSource(OriginalImage);
-                }
+                element.SelectedRectangle = value;
             }
         }
 
-        private Bitmap OriginalImage
-        {
-            get
-            {
-                if (originalImage == null)
-                {
-                    originalImage = ((BitmapDrawable)Control.Drawable).Bitmap;
-                }
 
-                return originalImage;
-            }
-        }
+        private Bitmap OriginalImage => ((BitmapDrawable)Control.Drawable).Bitmap;
+        //{
+        //    get
+        //    {
+        //        //if (originalImage == null)
+        //        //{
+        //        //    originalImage = ((BitmapDrawable)Control.Drawable).Bitmap;
+        //        //}
+
+        //        return originalImage;
+        //    }
+        //}
 
         private readonly DrawingService drawingService;
 
@@ -68,6 +56,7 @@ namespace FaceCrop.Droid.Renderers
             scaleGestureDetector = new ScaleGestureDetector(context, this);
         }
         
+        //TODO add unsubscribes
         protected override void OnElementChanged(ElementChangedEventArgs<Image> e)
         {
             base.OnElementChanged(e);
@@ -75,18 +64,23 @@ namespace FaceCrop.Droid.Renderers
             if (e.NewElement != null && Control != null)
             {
                 element = e.NewElement as CustomImageView;
-                Control.Touch += OnImageClicked;
                 
-                var refreshBehavior = (CustomImageViewRefreshBehavior)element.Behaviors
-                            .FirstOrDefault(behavior => behavior is CustomImageViewRefreshBehavior);
-
-                refreshBehavior.RefreshSelectionEventHandler += RefreshSelectionEventHandler;
+                element.SelectedRectangleChanged += SelectedRectangleChangedHandler;
+                Control.Touch += OnImageClicked;
             }
         }
 
-        private void RefreshSelectionEventHandler()
+        private void SelectedRectangleChangedHandler(FaceRectangleModel selectedRectangle)
         {
-            SelectedRectangle = null;
+            if (selectedRectangle != null)
+            {
+                DrawDarkenFrame();
+            }
+            //}
+            //else
+            //{
+            //    Element.Source = BitmapUtils.ConvertBitmapToImageSource(OriginalImage);
+            //}
         }
 
         private RectF ConvertSelectedRectangleModelToRectF()
@@ -104,10 +98,6 @@ namespace FaceCrop.Droid.Renderers
                 if (Control != null)
                 {
                     Control.Touch -= OnImageClicked;
-                    var refreshBehavior = (CustomImageViewRefreshBehavior)element.Behaviors
-                            .FirstOrDefault(behavior => behavior is CustomImageViewRefreshBehavior);
-
-                    refreshBehavior.RefreshSelectionEventHandler -= RefreshSelectionEventHandler;
                 }
             }
 

@@ -8,6 +8,7 @@ namespace ViewModels.ViewModels
 {
     class DisplayImagesViewModel : MvxViewModel<FaceRectangleCollectionModel>
     {
+        public ICommand RefreshSelectionCommand => new Command(RefreshSelectionCommandExecute);
         public override void Prepare(FaceRectangleCollectionModel parameter)
         {
             SelectedFaces = parameter.OriginalImage;
@@ -16,6 +17,7 @@ namespace ViewModels.ViewModels
 
         private ImageSource selectedFaces;
         private List<FaceRectangleModel> rectangles;
+        private FaceRectangleModel selectedRectangle;
 
         public ImageSource SelectedFaces
         {
@@ -23,10 +25,21 @@ namespace ViewModels.ViewModels
             set => SetProperty(ref selectedFaces, value);
         }
 
+        public FaceRectangleModel SelectedRectangle
+        {
+            get => selectedRectangle;
+            set => SetProperty(ref selectedRectangle, value);
+        }
+
         public List<FaceRectangleModel> Rectangles
         {
             get => rectangles;
             set => SetProperty(ref rectangles, value);
+        }
+
+        private void RefreshSelectionCommandExecute()
+        {
+            SelectedRectangle = null;
         }
     }
 }
