@@ -13,7 +13,7 @@ namespace FaceCrop.CustomControls
         public ImageSource ImageWithoutRectangles { get; private set; }
         public ImageSource ImageWithRectangles { get; private set; }
 
-        public event Action<FaceRectangleModel> SelectedRectangleChanged;
+        public event Action SelectedRectangleChanged;
 
         public static readonly BindableProperty RectangleCollectionProperty = BindableProperty.Create(
                 "RectangleCollection", 
@@ -43,8 +43,12 @@ namespace FaceCrop.CustomControls
 
             if (propertyName == SelectedRectangleProperty.PropertyName)
             {
-                Source = SelectedRectangle == null ? ImageWithRectangles : ImageWithoutRectangles;
-                SelectedRectangleChanged?.Invoke(this.SelectedRectangle);
+                SelectedRectangleChanged?.Invoke();
+
+                if (SelectedRectangle == null)
+                {
+                    Source = ImageWithRectangles;
+                }
             }
 
             if (propertyName == RectangleCollectionProperty.PropertyName)

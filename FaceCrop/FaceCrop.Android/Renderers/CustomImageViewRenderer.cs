@@ -11,6 +11,7 @@ using FaceCrop.Droid.Services;
 using Android.Views;
 using static Android.Views.ScaleGestureDetector;
 using FaceCrop.Droid.Utils;
+using System.Threading.Tasks;
 
 [assembly: ExportRenderer(typeof(CustomImageView), typeof(CustomImageViewRenderer))]
 namespace FaceCrop.Droid.Renderers
@@ -19,6 +20,8 @@ namespace FaceCrop.Droid.Renderers
     {
         private CustomImageView element;
         private int bitmapScaleRatio;
+        private Bitmap currentBitmapSource;
+        private FaceRectangleModel previousRectangle;
 
         private ScaleGestureDetector scaleGestureDetector;
 
@@ -33,20 +36,6 @@ namespace FaceCrop.Droid.Renderers
                 element.SelectedRectangle = value;
             }
         }
-
-
-        private Bitmap OriginalImage => ((BitmapDrawable)Control.Drawable).Bitmap;
-        //{
-        //    get
-        //    {
-        //        //if (originalImage == null)
-        //        //{
-        //        //    originalImage = ((BitmapDrawable)Control.Drawable).Bitmap;
-        //        //}
-
-        //        return originalImage;
-        //    }
-        //}
 
         private readonly DrawingService drawingService;
 
@@ -70,17 +59,30 @@ namespace FaceCrop.Droid.Renderers
             }
         }
 
-        private void SelectedRectangleChangedHandler(FaceRectangleModel selectedRectangle)
+        private async void SelectedRectangleChangedHandler()
         {
-            if (selectedRectangle != null)
+            await ResolveNewImageSource();
+
+            if (SelectedRectangle != null)
             {
                 DrawDarkenFrame();
             }
-            //}
-            //else
-            //{
-            //    Element.Source = BitmapUtils.ConvertBitmapToImageSource(OriginalImage);
-            //}
+        }
+
+        private async Task ResolveNewImageSource()
+        {
+            if (SelectedRectangle == null)
+            {
+                var newSource = element.ImageWithRectangles;
+                var bitmap = await BitmapUtils.ConvertImageSourceToBitmap((StreamImageSource)newSource);
+                Control.SetImageDrawable(new BitmapDrawable(bitmap));
+            }
+            if (SelectedRectangle != null && previousRectangle == null)
+            {
+                var newSource = element.ImageWithoutRectangles;
+                previousRectangle = SelectedRectangle;
+                currentBitmapSource = await BitmapUtils.ConvertImageSourceToBitmap((StreamImageSource)newSource);
+            }
         }
 
         private RectF ConvertSelectedRectangleModelToRectF()
@@ -129,8 +131,8 @@ namespace FaceCrop.Droid.Renderers
         private void DrawDarkenFrame()
         {
             var rect = ConvertSelectedRectangleModelToRectF();
-            var mask = drawingService.CreateHalfTrasparentBitmap(OriginalImage, rect);
-            var result = drawingService.MergeBitmaps(OriginalImage, mask);
+            var mask = drawingService.CreateHalfTrasparentBitmap(currentBitmapSource, rect);
+            var result = drawingService.MergeBitmaps(currentBitmapSource, mask);
             Control.SetImageDrawable(new BitmapDrawable(result));
         }
 
@@ -145,6 +147,7 @@ namespace FaceCrop.Droid.Renderers
         private Xamarin.Forms.Point GetClickPointAsBitmapCoordinates(TouchEventArgs e)
         {
             Bitmap bitmap = ((BitmapDrawable)Control.Drawable).Bitmap;
+
             bool isResolvedOnHeight;
 
             bitmapScaleRatio = ResolveRatioOfBitmapScaling(bitmap, out isResolvedOnHeight);

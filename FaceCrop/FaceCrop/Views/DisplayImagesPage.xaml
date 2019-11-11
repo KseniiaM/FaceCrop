@@ -21,7 +21,7 @@
 
             <controls:CustomImageView
                        Grid.Row="0"
-                       Source="{Binding SelectedFaces}"
+                       Source="{Binding SelectedFaces, Mode=TwoWay}"
                        BackgroundColor="Teal"
                        Aspect="AspectFit"
                        SelectedRectangle="{Binding SelectedRectangle, Mode=TwoWay}"
