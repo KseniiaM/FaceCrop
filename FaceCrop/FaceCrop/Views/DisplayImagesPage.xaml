@@ -18,29 +18,49 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
             <controls:CustomImageView
                        Grid.Row="0"
+                       Grid.ColumnSpan="2"
                        Source="{Binding SelectedFaces, Mode=TwoWay}"
-                       BackgroundColor="Teal"
                        Aspect="AspectFit"
                        SelectedRectangle="{Binding SelectedRectangle, Mode=TwoWay}"
-                       RectangleCollection="{Binding Rectangles}">
-                <!--<controls:CustomImageView.Behaviors>
-                    <behaviors:CustomImageViewRefreshBehavior
-                         RefreshButtonPressed="{Binding Source={x:Reference RefreshButton},
-                                                        Path=IsPressed}" />
-                </controls:CustomImageView.Behaviors>-->
-            </controls:CustomImageView>
-
+                       RectangleCollection="{Binding Rectangles}"
+                       IsVisible="{Binding Source={x:Reference croppedImage}, 
+                                           Path=IsVisible, 
+                                           Converter={StaticResource InverseBoolConverter}, 
+                                           FallbackValue=false}"/>
+            
+            <Image 
+                x:Name="croppedImage"
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Aspect="AspectFit"
+                Source="{Binding CroppedImage}"
+                IsVisible="{Binding CroppedImage, Converter={StaticResource ValueNotNullToBoolConverter}}"/>
+            
             <Button
                 x:Name="RefreshButton"
                 Grid.Row="1"
+                Grid.Column="0"
                 VerticalOptions="Start"
                 HorizontalOptions="StartAndExpand"
-                Text="Reset selection"
+                Text="Reset Selection"
                 Command="{Binding RefreshSelectionCommand}"/>
 
+            <Button
+                x:Name="CropButton"
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalOptions="Start"
+                HorizontalOptions="StartAndExpand"
+                Text="Crop Selected"
+                Command="{Binding CropCommand}"/>
+            
             <!--<ListView ItemsSource="{Binding SelectedImageSources}"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand"

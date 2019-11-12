@@ -11,6 +11,6 @@ namespace ViewModels.Services
     {
         Task<ImageSource> DrawFaceRactangles(StreamImageSource image, List<FaceRectangleModel> faces);
 
-        List<ImageSource> CropImages(MediaFile mediaFile, List<FaceRectangleModel> faceRectangleModel);
+        Task<ImageSource> CropImages(StreamImageSource imageSource, FaceRectangleModel faceRectangleModel);
     }
 }

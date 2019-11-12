@@ -16,20 +16,18 @@ namespace FaceCrop.Droid.Services
 {
     class ImageCropService : IImageCropService
     {
-        public List<ImageSource> CropImages(MediaFile mediaFile, List<FaceRectangleModel> faces)
+        public async Task<ImageSource> CropImages(StreamImageSource imageSource, FaceRectangleModel face)
         {
-            var bitmap = BitmapFactory.DecodeStream(mediaFile.GetStream());
             
-            return faces.Select(faceModel =>
-            {
-                var cropped = Bitmap.CreateBitmap(bitmap,
-                                               faceModel.Top,
-                                               faceModel.Left,
-                                               faceModel.Width,
-                                               faceModel.Height);
+            var bitmap = await BitmapUtils.ConvertImageSourceToBitmap(imageSource);
 
-                return BitmapUtils.ConvertBitmapToImageSource(cropped);
-            }).ToList();
+            var cropped = Bitmap.CreateBitmap(bitmap,
+                                              face.Top,
+                                              face.Left,
+                                              face.Width,
+                                              face.Height);
+
+            return BitmapUtils.ConvertBitmapToImageSource(cropped);
         }
 
         public async Task<ImageSource> DrawFaceRactangles(StreamImageSource image, List<FaceRectangleModel> faces)
