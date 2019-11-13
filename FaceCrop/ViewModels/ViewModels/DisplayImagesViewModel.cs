@@ -28,6 +28,7 @@ namespace ViewModels.ViewModels
             CropCommand = new Command(async () => await CropCommandExecute(),
                                             () => SelectedRectangle != null);
         }
+
         public override void Prepare(FaceRectangleCollectionModel parameter)
         {
             originalImage = parameter.OriginalImage;
