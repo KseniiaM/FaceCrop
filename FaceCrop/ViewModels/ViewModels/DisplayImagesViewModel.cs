@@ -15,9 +15,18 @@ namespace ViewModels.ViewModels
         private List<FaceRectangleModel> rectangles;
         private FaceRectangleModel selectedRectangle;
 
-        public ICommand RefreshSelectionCommand => new Command(RefreshSelectionCommandExecute);
+        public ICommand RefreshSelectionCommand { get; set; }
 
-        public ICommand CropCommand => new Command(async () => await CropCommandExecute(), () => SelectedRectangle != null);
+        public ICommand CropCommand { get; set; }
+
+        public DisplayImagesViewModel()
+        {
+            CropCommand = new Command(async () => await CropCommandExecute(),
+                                            () => SelectedRectangle != null);
+
+            RefreshSelectionCommand = new Command(RefreshSelectionCommandExecute,
+                                                  () => SelectedRectangle != null);
+        }
 
         public override void Prepare(FaceRectangleCollectionModel parameter)
         {
@@ -44,6 +53,7 @@ namespace ViewModels.ViewModels
             {
                 SetProperty(ref selectedRectangle, value);
                 ((Command)CropCommand).ChangeCanExecute();
+                ((Command)RefreshSelectionCommand).ChangeCanExecute();
             }
         }
 

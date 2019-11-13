@@ -1,11 +1,8 @@
-﻿
-using Android.Content;
-using Android.Graphics;
+﻿using Android.Graphics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
 using static Android.Graphics.Bitmap;
 
 namespace FaceCrop.Droid.Utils
