@@ -42,6 +42,7 @@ namespace ViewModels.ViewModels
         }
 
         private async Task DisplayImageOnNewPage(bool getFromGallery)
+
         {
             await InitMedia();
             var selectedImage = getFromGallery ? await CrossMedia.Current.PickPhotoAsync()
@@ -51,11 +52,9 @@ namespace ViewModels.ViewModels
             if (selectedImage != null)
             {
                 //TODO this one should be uncommented and work if you generate a new key
-                //var json = await restService.PostImageForFaceDetection(sourceMediaFile);
+                //var json = await restService.PostImageForFaceDetection(selectedImage);
 
                 var faces = jsonParserService.ReturnEmulatedFaceModels();
-                //var croppedFaces = DependencyService.Get<IImageCropService>().CropImages(selectedImage, faces);
-                //var croppedFacesImage = DependencyService.Get<IImageCropService>().DrawFaceRactangles(selectedImage, faces);
 
                 var faceModel = new FaceRectangleCollectionModel()
                 {

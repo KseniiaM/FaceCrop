@@ -22,10 +22,10 @@ namespace FaceCrop.Droid.Services
             var bitmap = await BitmapUtils.ConvertImageSourceToBitmap(imageSource);
 
             var cropped = Bitmap.CreateBitmap(bitmap,
-                                              face.Top,
-                                              face.Left,
-                                              face.Width,
-                                              face.Height);
+                                              ValidateRectStartPointCoordinate(face.Left),
+                                              ValidateRectStartPointCoordinate(face.Top),
+                                              ValidateReccToLengthPointCoordinate(face.Left, face.Width, bitmap.Width),
+                                              ValidateReccToLengthPointCoordinate(face.Top, face.Height, bitmap.Height));
 
             return BitmapUtils.ConvertBitmapToImageSource(cropped);
         }
@@ -56,6 +56,26 @@ namespace FaceCrop.Droid.Services
             paint.Color = new Android.Graphics.Color(255, 255, 255);
             paint.SetStyle(Paint.Style.Stroke);
             canvas.DrawRect(bounds, paint);
+        }
+
+        private int ValidateRectStartPointCoordinate(int coordinateValue)
+        {
+            return coordinateValue > 0 ? coordinateValue : 0;
+        }
+
+        private int ValidateReccToLengthPointCoordinate(int startCoordinate, int length, int biggestAllowedValue)
+        {
+            if(startCoordinate <= 0)
+            {
+                if ((length + startCoordinate) > biggestAllowedValue)
+                {
+                    return biggestAllowedValue - 1;
+                }
+
+                return length + startCoordinate;
+            }
+
+            return (startCoordinate + length) >= biggestAllowedValue ? (biggestAllowedValue - startCoordinate - 1) : length;
         }
     }
 }

@@ -47,8 +47,8 @@
                 x:Name="RefreshButton"
                 Grid.Row="1"
                 Grid.Column="0"
-                VerticalOptions="Start"
-                HorizontalOptions="StartAndExpand"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
                 Text="Reset Selection"
                 Command="{Binding RefreshSelectionCommand}"/>
 
@@ -56,8 +56,8 @@
                 x:Name="CropButton"
                 Grid.Row="1"
                 Grid.Column="1"
-                VerticalOptions="Start"
-                HorizontalOptions="StartAndExpand"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
                 Text="Crop Selected"
                 Command="{Binding CropCommand}"/>
             

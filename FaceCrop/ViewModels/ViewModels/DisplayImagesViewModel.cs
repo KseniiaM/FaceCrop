@@ -14,13 +14,23 @@ namespace ViewModels.ViewModels
         private ImageSource croppedImage;
         private List<FaceRectangleModel> rectangles;
         private FaceRectangleModel selectedRectangle;
+        private ImageSource originalImage;
 
-        public ICommand RefreshSelectionCommand => new Command(RefreshSelectionCommandExecute);
+        public ICommand RefreshSelectionCommand { get; set; }
 
-        public ICommand CropCommand => new Command(async () => await CropCommandExecute(), () => SelectedRectangle != null);
+        public ICommand CropCommand { get; set; }
 
+        public DisplayImagesViewModel()
+        {
+            RefreshSelectionCommand = new Command(RefreshSelectionCommandExecute, 
+                                                  () => SelectedRectangle != null);
+
+            CropCommand = new Command(async () => await CropCommandExecute(),
+                                            () => SelectedRectangle != null);
+        }
         public override void Prepare(FaceRectangleCollectionModel parameter)
         {
+            originalImage = parameter.OriginalImage;
             SelectedFaces = parameter.OriginalImage;
             Rectangles = parameter.RectangleModels;
         }
@@ -44,6 +54,7 @@ namespace ViewModels.ViewModels
             {
                 SetProperty(ref selectedRectangle, value);
                 ((Command)CropCommand).ChangeCanExecute();
+                ((Command)RefreshSelectionCommand).ChangeCanExecute();
             }
         }
 
@@ -61,7 +72,7 @@ namespace ViewModels.ViewModels
         private async Task CropCommandExecute()
         {
             CroppedImage = await DependencyService.Get<IImageCropService>()
-                                                  .CropImages(SelectedFaces as StreamImageSource, SelectedRectangle);
+                                                  .CropImages(originalImage as StreamImageSource, SelectedRectangle);
             SelectedRectangle = null;
         }
     }

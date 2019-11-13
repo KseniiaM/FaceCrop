@@ -11,13 +11,18 @@ namespace ViewModels.Services
     {
         public const string faceJson = @"[
             {
-            'faceRectangle':{
                 'Top': '30',
                 'Left': '30',
-                'Width': '130',
-                'Height': '150'
+                'Width': '100',
+                'Height': '130'
+            },
+            {
+                'Top': '80',
+                'Left': '70',
+                'Width': '100',
+                'Height': '100'
             }
-        }]";
+        ]";
 
         public List<FaceRectangleModel> ConvertJsonToFaceModels(string jsonString)
         {
@@ -30,13 +35,12 @@ namespace ViewModels.Services
             JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
             serializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
 
-            var json = JsonConvert.DeserializeObject<JToken>(faceJson, serializerSettings);
-            return json.Children().Select(item => CreateFaceModel(item)).ToList();
+            var json = JsonConvert.DeserializeObject<List<JToken>>(faceJson, serializerSettings);
+            return json.Select(item => CreateFaceModel(item)).ToList();
         }
 
-        private FaceRectangleModel CreateFaceModel(JToken item)
+        private FaceRectangleModel CreateFaceModel(JToken faceRect)
         {
-            var faceRect = item["faceRectangle"];
             return new FaceRectangleModel()
             {
                 Top = (int)faceRect["Top"],
