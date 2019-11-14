@@ -52,9 +52,10 @@ namespace ViewModels.ViewModels
             if (selectedImage != null)
             {
                 //TODO this one should be uncommented and work if you generate a new key
-                //var json = await restService.PostImageForFaceDetection(selectedImage);
+                var json = await restService.PostImageForFaceDetection(selectedImage);
+                var faces = jsonParserService.ConvertJsonToFaceModels(json);
 
-                var faces = jsonParserService.ReturnEmulatedFaceModels();
+                //var faces = jsonParserService.ReturnEmulatedFaceModels();
 
                 var faceModel = new FaceRectangleCollectionModel()
                 {

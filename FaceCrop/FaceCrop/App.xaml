@@ -7,6 +7,16 @@
         <ResourceDictionary>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
             <converters:ValueNotNullToBoolConverter x:Key="ValueNotNullToBoolConverter"/>
+
+            <Color x:Key="BlueColor">#2255AA</Color>
+            <Color x:Key="LightBlueColor">#4488BB</Color>
+
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+                <Setter Property="FontSize" Value="Medium"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BlueColor}"/>
+                <Setter Property="TextColor" Value="White"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

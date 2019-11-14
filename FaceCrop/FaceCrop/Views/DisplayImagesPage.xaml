@@ -7,7 +7,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:controls="clr-namespace:FaceCrop.CustomControls"
-             xmlns:behaviors="clr-namespace:FaceCrop.Behaviors"
              x:Class="FaceCrop.Views.DisplayImagesPage">
     <ContentPage.Content>
         <Grid Margin="10"
@@ -47,41 +46,23 @@
                 x:Name="RefreshButton"
                 Grid.Row="1"
                 Grid.Column="0"
-                VerticalOptions="FillAndExpand"
+                VerticalOptions="StartAndExpand"
                 HorizontalOptions="FillAndExpand"
-                Text="Reset Selection"
+                Text="Reset"
+                Style="{StaticResource ButtonStyle}"
+                BackgroundColor="{StaticResource LightBlueColor}"
                 Command="{Binding RefreshSelectionCommand}"/>
 
             <Button
                 x:Name="CropButton"
                 Grid.Row="1"
                 Grid.Column="1"
-                VerticalOptions="FillAndExpand"
+                VerticalOptions="StartAndExpand"
                 HorizontalOptions="FillAndExpand"
                 Text="Crop Selected"
+                Style="{StaticResource ButtonStyle}"
+                BackgroundColor="{StaticResource LightBlueColor}"
                 Command="{Binding CropCommand}"/>
-            
-            <!--<ListView ItemsSource="{Binding SelectedImageSources}"
-                      HorizontalOptions="FillAndExpand"
-                      VerticalOptions="FillAndExpand"
-                      HasUnevenRows="true"
-                      SeparatorVisibility="None"
-                      Margin="10">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <StackLayout HeightRequest="300">
-                                <Image Source="{Binding .}"
-                                   Aspect="AspectFit"
-                                   HorizontalOptions="FillAndExpand"
-                                   VerticalOptions="FillAndExpand"
-                                   Margin="15" />
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>-->
-            
             
         </Grid>
     </ContentPage.Content>

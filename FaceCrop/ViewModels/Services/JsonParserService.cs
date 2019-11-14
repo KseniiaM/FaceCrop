@@ -27,7 +27,7 @@ namespace ViewModels.Services
         public List<FaceRectangleModel> ConvertJsonToFaceModels(string jsonString)
         {
             var json = JsonConvert.DeserializeObject(jsonString) as JArray;
-            return json.Select(item => CreateFaceModel(item)).ToList();
+            return json.Select(item => CreateFaceModelMicrosoftJson(item)).ToList();
         }
 
         public List<FaceRectangleModel> ReturnEmulatedFaceModels()
@@ -50,6 +50,17 @@ namespace ViewModels.Services
             };
         }
 
+        private FaceRectangleModel CreateFaceModelMicrosoftJson(JToken item)
+        {
+            var faceRect = item["faceRectangle"];
 
+            return new FaceRectangleModel()
+            {
+                Top = (int)faceRect["top"],
+                Left = (int)faceRect["left"],
+                Width = (int)faceRect["width"],
+                Height = (int)faceRect["height"]
+            };
+        }
     }
 }

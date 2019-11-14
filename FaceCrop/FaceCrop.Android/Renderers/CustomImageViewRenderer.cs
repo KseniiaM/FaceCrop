@@ -19,10 +19,11 @@ namespace FaceCrop.Droid.Renderers
     class CustomImageViewRenderer : ImageRenderer, IOnScaleGestureListener
     {
         private CustomImageView element;
-        private int bitmapScaleRatio;
+        private double bitmapScaleRatio;
         private Bitmap currentBitmapSource;
         private FaceRectangleModel previousRectangle;
 
+        private readonly DrawingService drawingService;
         private ScaleGestureDetector scaleGestureDetector;
 
         private FaceRectangleModel SelectedRectangle
@@ -37,15 +38,12 @@ namespace FaceCrop.Droid.Renderers
             }
         }
 
-        private readonly DrawingService drawingService;
-
         public CustomImageViewRenderer(Context context) : base(context)
         {
             drawingService = new DrawingService();
             scaleGestureDetector = new ScaleGestureDetector(context, this);
         }
         
-        //TODO add unsubscribes
         protected override void OnElementChanged(ElementChangedEventArgs<Image> e)
         {
             base.OnElementChanged(e);
@@ -100,6 +98,7 @@ namespace FaceCrop.Droid.Renderers
                 if (Control != null)
                 {
                     Control.Touch -= OnImageClicked;
+                    element.SelectedRectangleChanged -= SelectedRectangleChangedHandler;
                 }
             }
 
@@ -172,7 +171,7 @@ namespace FaceCrop.Droid.Renderers
             return height / width;
         }
 
-        private int ResolveRatioOfBitmapScaling(Bitmap bitmap, out bool isResolvedOnHeight)
+        private double ResolveRatioOfBitmapScaling(Bitmap bitmap, out bool isResolvedOnHeight)
         {
             var bitmapRatio = CalculateRatio(bitmap.Width, bitmap.Height);
             var controlRatio = CalculateRatio(Control.Width, Control.Height);
@@ -186,16 +185,16 @@ namespace FaceCrop.Droid.Renderers
             else
             {
                 isResolvedOnHeight = false;
-                return Control.Width / bitmap.Width;
+                return (double)Control.Width / (double)bitmap.Width;
             }
         }
 
-        private Xamarin.Forms.Point HandleClickForHeightBoundsImage(Bitmap bitmap, int scale, TouchEventArgs args)
+        private Xamarin.Forms.Point HandleClickForHeightBoundsImage(Bitmap bitmap, double scale, TouchEventArgs args)
         {
             var bitmapHeight = bitmap.Height * scale;
-            var offset = (Control.Height - bitmapHeight) / 2.0f;
+            var offset = (Control.Height - bitmapHeight) / 2.0d;
 
-            var yCoord = args.Event.GetY();
+            var yCoord = (double) args.Event.GetY();
             if (yCoord < offset || yCoord > (bitmapHeight + offset))
             {
                 //Click out of bitmap bounds
@@ -209,12 +208,12 @@ namespace FaceCrop.Droid.Renderers
             return new Xamarin.Forms.Point(xCoord / scale, yCoord / scale);
         }
 
-        private Xamarin.Forms.Point HandleClickForWidthBoundsImage(Bitmap bitmap, int scale, TouchEventArgs args)
+        private Xamarin.Forms.Point HandleClickForWidthBoundsImage(Bitmap bitmap, double scale, TouchEventArgs args)
         {
             var bitmapWidth = bitmap.Width * scale;
-            var offset = (Control.Width - bitmapWidth) / 2.0f;
+            var offset = (Control.Width - bitmapWidth) / 2.0d;
 
-            var xCoord = args.Event.GetX();
+            var xCoord = (double) args.Event.GetX();
             if (xCoord < offset || xCoord > (bitmapWidth + offset))
             {
                 //Click out of bitmap bounds
@@ -252,7 +251,16 @@ namespace FaceCrop.Droid.Renderers
             return true;
         }
 
-        public void OnDrag(int oldX, int newX, int oldY, int newY)
+        public bool OnScaleBegin(ScaleGestureDetector detector)
+        {
+            return true;
+        }
+
+        public void OnScaleEnd(ScaleGestureDetector detector)
+        {
+        }
+
+        private void OnDrag(int oldX, int newX, int oldY, int newY)
         {
             var xDiff = newX - oldX;
             var yDiff = newY - oldY;
@@ -273,15 +281,6 @@ namespace FaceCrop.Droid.Renderers
             return  (int) (newDistance / bitmapScaleRatio - oldDistance / bitmapScaleRatio);
         }
 
-        public bool OnScaleBegin(ScaleGestureDetector detector)
-        {
-            return true;
-        }
-
-        public void OnScaleEnd(ScaleGestureDetector detector)
-        {
-        }
-
         int previousX = 0;
         int previousY = 0;
 
@@ -294,16 +293,16 @@ namespace FaceCrop.Droid.Renderers
             {
                 case MotionEventActions.Down:
                 {
-                    previousX = (int) e.GetX() / bitmapScaleRatio;
-                    previousY = (int) e.GetY() / bitmapScaleRatio;
+                    previousX = (int) (e.GetX() / bitmapScaleRatio);
+                    previousY = (int) (e.GetY() / bitmapScaleRatio);
 
                     break;
                 }
                 case MotionEventActions.Move:
                 case MotionEventActions.Up:
                 {
-                    newX = (int)e.GetX() / bitmapScaleRatio;
-                    newY = (int)e.GetY() / bitmapScaleRatio;
+                    newX = (int)(e.GetX() / bitmapScaleRatio);
+                    newY = (int)(e.GetY() / bitmapScaleRatio);
 
                     if ((previousX == newX && previousY == newY) || (previousX == 0 && previousY == 0))
                     {

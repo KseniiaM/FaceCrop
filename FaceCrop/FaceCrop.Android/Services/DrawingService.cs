@@ -7,7 +7,7 @@ using static Android.Graphics.Bitmap;
 [assembly: Dependency(typeof(DrawingService))]
 namespace FaceCrop.Droid.Services
 {
-    public class DrawingService : IDisposable
+    public class DrawingService
     {
         private Paint darkenPaint;
         private Paint eraserPaint;
@@ -67,15 +67,6 @@ namespace FaceCrop.Droid.Services
             MergeCanvas.DrawBitmap(bitmapSource, 0, 0, paint);
             MergeCanvas.DrawBitmap(mask, 0, 0, paint);
             return mergeBitmap;
-        }
-
-        //TODO add a button on UI for user to confirm that area selected is good, so we can continue and dispose all these stuff (should create a new drawing service for new pic?)
-        public void Dispose()
-        {
-            darkenPaint.Dispose();
-            eraserPaint.Dispose();
-            halfTransparentFrameCanvas.Dispose();
-            mergeCanvas.Dispose();
         }
     }
 }

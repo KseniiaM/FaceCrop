@@ -4,15 +4,11 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="FaceCrop.Views.StartPage" >
-   <views:MvxContentPage.Resources>
-       <Color x:Key="BlueColor">#2255AA</Color>
-   </views:MvxContentPage.Resources>
     <ContentPage.Content>
         
         <StackLayout Spacing="20"
                      Margin="10, 40">
             
-<!--TODO create a style for buttons and text -->
             <Label Text="Face Crop"
                    HorizontalOptions="CenterAndExpand"
                    FontSize="24"
@@ -25,19 +21,13 @@
                    TextColor="{StaticResource BlueColor}"/>
 
             <Button Text="Load from gallery"
-                    HorizontalOptions="CenterAndExpand"
-                    FontSize="Medium"
+                    Style="{StaticResource ButtonStyle}"
                     WidthRequest="150"
-                    BackgroundColor="{StaticResource BlueColor}"
-                    TextColor="White"
                     Command="{Binding PickFromGalleryCommand}"/>
 
             <Button Text="Take a photo"
-                    HorizontalOptions="CenterAndExpand"
+                    Style="{StaticResource ButtonStyle}"
                     WidthRequest="150"
-                    FontSize="Medium"
-                    BackgroundColor="{StaticResource BlueColor}"
-                    TextColor="White"
                     Command="{Binding TakePhotoCommand}"/>
 
         </StackLayout>
